@@ -1,0 +1,3 @@
+[general]
+dirs = ["src/views"]
+whitespace = "preserve"
