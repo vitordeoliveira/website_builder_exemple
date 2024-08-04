@@ -1,0 +1,16 @@
+	{% extends "../root/root.html" %}
+	
+	{% block content %}
+	
+	<div>
+	  <h1> Hello from home page</h1>
+	  <p>here we will pass a value: {{stringvalue}}</p>
+	  <p>here we will pass a vector of strings and render then:</p>
+	  <ul>
+	    {% for value in vec_strings %}  
+	    <li>{{ value }}</li>    
+	    {% endfor %}
+	  </ul>
+	</div>
+	
+	{% endblock %}
