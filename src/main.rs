@@ -6,7 +6,15 @@ use website::view::{home, root};
 // TODO: impl a extension
 // TODO: impl a extractor
 // TODO: impl a middleware
-
+// TODO: setup tracing with open telemetry
+// TODO: setup config singleton
+// TODO: impl i18n in a way that if not set on URI redirect to default
+// TODO: impl adatper for database connections
+// TODO: setup error
+// TODO: impl controller properly
+// TODO: impl model
+//
+//
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let port = "3000";
