@@ -1,6 +1,9 @@
 use axum::{routing::get, Router};
 
-use website::view::{home, root};
+use website::{
+    view::{home, root},
+    AppState,
+};
 
 // TODO: impl a state
 // TODO: impl a extension
@@ -25,11 +28,13 @@ async fn main() -> Result<(), ()> {
         .await
         .unwrap();
 
+    let state = AppState { title: "website" };
     let pages = Router::new()
         .route("/", get(root))
-        .route("/home", get(home));
+        .route("/home", get(home))
+        .with_state(state);
 
-    let app = Router::new().nest(":i18n", pages);
+    let app = Router::new().nest("/:i18n", pages);
 
     axum::serve(listener, app).await.unwrap();
 
