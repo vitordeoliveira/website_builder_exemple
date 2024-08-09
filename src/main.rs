@@ -1,12 +1,10 @@
-use axum::{routing::get, Router};
+use axum::{routing::get, Extension, Router};
 
 use website::{
     view::{home, root},
     AppState,
 };
 
-// TODO: impl a state
-// TODO: impl a extension
 // TODO: impl a extractor
 // TODO: impl a middleware
 // TODO: setup tracing with open telemetry
@@ -32,7 +30,8 @@ async fn main() -> Result<(), ()> {
     let pages = Router::new()
         .route("/", get(root))
         .route("/home", get(home))
-        .with_state(state);
+        .with_state(state)
+        .layer(Extension("hello from extension"));
 
     let app = Router::new().nest("/:i18n", pages);
 

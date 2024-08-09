@@ -3,6 +3,7 @@ use axum::{
     extract::State,
     http::StatusCode,
     response::{Html, IntoResponse},
+    Extension,
 };
 
 use crate::AppState;
@@ -10,10 +11,14 @@ use crate::AppState;
 #[derive(Template)]
 #[template(path = "root/root.html")]
 pub struct RootTemplate {
-    title: &'static str,
+    title: String,
 }
 
-pub async fn root(State(state): State<AppState>) -> impl IntoResponse {
-    let root = RootTemplate { title: state.title };
+pub async fn root(
+    State(state): State<AppState>,
+    ext: Extension<&'static str>,
+) -> impl IntoResponse {
+    let title = format!("from state: {} ---- from extension: {}", state.title, ext.0);
+    let root = RootTemplate { title };
     (StatusCode::OK, Html(root.render().unwrap()))
 }
