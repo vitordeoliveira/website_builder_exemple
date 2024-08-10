@@ -5,7 +5,6 @@ use website::{
     AppState,
 };
 
-// TODO: impl a extractor
 // TODO: impl a middleware
 // TODO: setup tracing with open telemetry
 // TODO: setup config singleton
@@ -16,6 +15,7 @@ use website::{
 // TODO: impl model
 //
 //
+
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let port = "3000";
