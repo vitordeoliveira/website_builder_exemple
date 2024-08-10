@@ -6,7 +6,7 @@ use axum::{
     Extension,
 };
 
-use crate::AppState;
+use crate::{AppState, ExtractTitle};
 
 #[derive(Template)]
 #[template(path = "root/root.html")]
@@ -15,10 +15,14 @@ pub struct RootTemplate {
 }
 
 pub async fn root(
-    State(state): State<AppState>,
-    ext: Extension<&'static str>,
+    State(AppState { title }): State<AppState>,
+    Extension(extension_title): Extension<&'static str>,
+    ExtractTitle(extract_title): ExtractTitle,
 ) -> impl IntoResponse {
-    let title = format!("from state: {} ---- from extension: {}", state.title, ext.0);
+    let title = format!(
+        "from state: {} ---- from extension: {} ---- from extractor {}",
+        title, extension_title, extract_title
+    );
     let root = RootTemplate { title };
     (StatusCode::OK, Html(root.render().unwrap()))
 }
