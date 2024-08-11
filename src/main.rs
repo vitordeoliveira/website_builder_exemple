@@ -1,11 +1,16 @@
-use axum::{routing::get, Extension, Router};
+use axum::{
+    extract::Request,
+    middleware::{self, Next},
+    response::{IntoResponse, Redirect},
+    routing::get,
+    Extension, Router,
+};
 
 use website::{
     view::{home, root},
     AppState,
 };
 
-// TODO: impl a middleware
 // TODO: setup tracing with open telemetry
 // TODO: setup config singleton
 // TODO: impl i18n in a way that if not set on URI redirect to default
@@ -13,8 +18,15 @@ use website::{
 // TODO: setup error
 // TODO: impl controller properly
 // TODO: impl model
-//
-//
+
+async fn my_middleware(request: Request, next: Next) -> impl IntoResponse {
+    // let response = next.run(request).await;
+    //
+    // // do something with `response`...
+    //
+    // // response
+    Redirect::temporary("/en/home")
+}
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -29,9 +41,10 @@ async fn main() -> Result<(), ()> {
     let state = AppState { title: "website" };
     let pages = Router::new()
         .route("/", get(root))
-        .route("/home", get(home))
         .with_state(state)
-        .layer(Extension("hello from extension"));
+        .layer(Extension("hello from extension"))
+        .layer(middleware::from_fn(my_middleware))
+        .route("/home", get(home));
 
     let app = Router::new().nest("/:i18n", pages);
 
