@@ -14,15 +14,15 @@ use website::{
     AppState,
 };
 
+// TODO: impl i18n in a way that if not set on URI redirect to default
+// TODO: setup error
 // TODO: setup tracing with open telemetry
 // TODO: setup config singleton
-// TODO: impl i18n in a way that if not set on URI redirect to default
 // TODO: impl adatper for database connections
-// TODO: setup error
 // TODO: impl controller properly
 // TODO: impl model
 
-async fn my_middleware(mut request: Request, next: Next) -> impl IntoResponse {
+async fn i18n_middleware(mut request: Request, next: Next) -> impl IntoResponse {
     // *request.uri_mut() = Uri::from_str("/en/home").unwrap();
     let response = next.run(request).await;
     // // do something with `response`...o
