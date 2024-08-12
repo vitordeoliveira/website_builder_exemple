@@ -1,5 +1,8 @@
+use std::str::FromStr;
+
 use axum::{
     extract::Request,
+    http::Uri,
     middleware::{self, Next},
     response::{IntoResponse, Redirect},
     routing::get,
@@ -19,13 +22,13 @@ use website::{
 // TODO: impl controller properly
 // TODO: impl model
 
-async fn my_middleware(request: Request, next: Next) -> impl IntoResponse {
-    // let response = next.run(request).await;
-    //
-    // // do something with `response`...
-    //
-    // // response
-    Redirect::temporary("/en/home")
+async fn my_middleware(mut request: Request, next: Next) -> impl IntoResponse {
+    // *request.uri_mut() = Uri::from_str("/en/home").unwrap();
+    let response = next.run(request).await;
+    // // do something with `response`...o
+    // dbg!(response);
+    response
+    // Redirect::temporary("/en/home")
 }
 
 #[tokio::main]
