@@ -19,9 +19,10 @@ pub async fn root(
     State(AppState { title }): State<AppState>,
     Extension(extension_title): Extension<&'static str>,
     ExtractTitle(extract_title): ExtractTitle,
+    Extension(lang_ext): Extension<String>,
 ) -> impl IntoResponse {
     let title = format!(
-        "from state: {} ---- from extension: {} ---- from extractor {} ---- lang:{}",
+        "from state: {} ---- from extension: {} ---- from extractor {} ---- lang:{} ---- langExt:{lang_ext}",
         title, extension_title, extract_title, lang
     );
     let root = RootTemplate { title };
