@@ -1,14 +1,9 @@
 use std::{collections::HashSet, sync::Arc};
 
-use axum::{
-    extract::Request,
-    middleware::{self, Next},
-    response::IntoResponse,
-    routing::get,
-    Extension, Router,
-};
+use axum::{middleware, routing::get, Extension, Router};
 
 use website::{
+    i18n::{i18n_middleware, AllowedLangs, Lang},
     view::{home, root},
     AppState,
 };
@@ -21,44 +16,16 @@ use website::{
 // TODO: impl controller properly
 // TODO: impl model
 
-#[derive(Clone, Debug)]
-struct AllowedLangs {
-    langs: Arc<HashSet<String>>,
-    default_lang: String,
-}
-
-async fn i18n_middleware(
-    Extension(allowed_langs): Extension<AllowedLangs>,
-    mut req: Request,
-    next: Next,
-) -> impl IntoResponse {
-    let path = req.uri().path().to_string();
-    let lang_segment = path.trim_start_matches('/').split('/').next().unwrap();
-
-    let lang = if allowed_langs.langs.contains(lang_segment) {
-        lang_segment.to_string()
-    } else {
-        allowed_langs.default_lang.clone()
-    };
-
-    req.extensions_mut().insert(lang);
-    next.run(req).await
-}
-
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let port = "3000";
     tracing_subscriber::fmt().init();
     tracing::info!("router initialized, now listening on port {}", port);
-    let allowed_langs = vec!["en".to_string(), "fr".to_string(), "es".to_string()]
-        .into_iter()
-        .collect::<HashSet<_>>();
-
-    let default_lang = "en".to_string();
+    let allowed_langs = Lang::as_vec().into_iter().collect::<HashSet<_>>();
 
     let allowed_langs = AllowedLangs {
         langs: Arc::new(allowed_langs),
-        default_lang,
+        default_lang: Lang::En,
     };
     let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{port}"))
         .await

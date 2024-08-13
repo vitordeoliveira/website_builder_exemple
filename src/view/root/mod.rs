@@ -6,7 +6,7 @@ use axum::{
     Extension,
 };
 
-use crate::{AppState, ExtractTitle};
+use crate::{i18n::Lang, AppState, ExtractTitle};
 
 #[derive(Template)]
 #[template(path = "root/root.html")]
@@ -19,7 +19,7 @@ pub async fn root(
     State(AppState { title }): State<AppState>,
     Extension(extension_title): Extension<&'static str>,
     ExtractTitle(extract_title): ExtractTitle,
-    Extension(lang_ext): Extension<String>,
+    Extension(lang_ext): Extension<Lang>,
 ) -> impl IntoResponse {
     let title = format!(
         "from state: {} ---- from extension: {} ---- from extractor {} ---- lang:{} ---- langExt:{lang_ext}",
