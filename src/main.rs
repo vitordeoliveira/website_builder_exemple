@@ -1,9 +1,7 @@
-use std::{collections::HashSet, sync::Arc};
-
 use axum::{middleware, routing::get, Extension, Router};
 
 use website::{
-    i18n::{i18n_middleware, AllowedLangs, Lang},
+    i18n::i18n_middleware,
     view::{home, root},
     AppState,
 };
@@ -21,12 +19,7 @@ async fn main() -> Result<(), ()> {
     let port = "3000";
     tracing_subscriber::fmt().init();
     tracing::info!("router initialized, now listening on port {}", port);
-    let allowed_langs = Lang::as_vec().into_iter().collect::<HashSet<_>>();
 
-    let allowed_langs = AllowedLangs {
-        langs: Arc::new(allowed_langs),
-        default_lang: Lang::En,
-    };
     let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{port}"))
         .await
         .unwrap();
@@ -40,8 +33,7 @@ async fn main() -> Result<(), ()> {
 
     let app = Router::new()
         .nest("/:i18n", pages)
-        .layer(middleware::from_fn(i18n_middleware))
-        .layer(Extension(allowed_langs));
+        .layer(middleware::from_fn(i18n_middleware));
 
     axum::serve(listener, app).await.unwrap();
 
