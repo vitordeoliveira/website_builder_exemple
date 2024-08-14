@@ -2,10 +2,9 @@ use askama::Template;
 use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
-    Extension,
 };
 
-use crate::i18n::Lang;
+use crate::i18n::I18N;
 
 #[derive(Template)]
 #[template(path = "home/home.html")]
@@ -13,15 +12,15 @@ pub struct HomeTemplate {
     title: &'static str,
     stringvalue: &'static str,
     vec_strings: Vec<&'static str>,
-    lang: Lang,
+    lang: I18N,
 }
 
-pub async fn home(Extension(lang_ext): Extension<Lang>) -> impl IntoResponse {
+pub async fn home(lang: I18N) -> impl IntoResponse {
     let home = HomeTemplate {
         title: "title",
         stringvalue: "Hello from myownvalue",
         vec_strings: vec!["Rust", "is", "the", "best", "language"],
-        lang: lang_ext,
+        lang,
     };
     (StatusCode::OK, Html(home.render().unwrap()))
 }
