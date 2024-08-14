@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use axum::{extract::Request, middleware::Next, response::IntoResponse};
+use axum::{async_trait, extract::FromRequestParts, http::request::Parts};
 use strum::{Display, EnumString};
 
 // TODO: should be a struct that impl Display
@@ -8,18 +8,24 @@ use strum::{Display, EnumString};
 
 #[derive(Clone, EnumString, Display)]
 #[strum(ascii_case_insensitive)]
-pub enum Lang {
+pub enum I18N {
     En,
     Fr,
     Es,
 }
 
-pub async fn i18n_middleware(mut req: Request, next: Next) -> Result<impl IntoResponse, ()> {
-    let path = req.uri().path().to_string();
-    let lang_segment = path.trim_start_matches('/').split('/').next().unwrap();
+#[async_trait]
+impl<S> FromRequestParts<S> for I18N
+where
+    S: Send + Sync,
+{
+    type Rejection = ();
 
-    let lang = Lang::from_str(lang_segment).unwrap_or(Lang::En);
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        let path = parts.uri.to_string();
+        let lang_segment = path.trim_start_matches('/').split('/').next().unwrap();
 
-    req.extensions_mut().insert(lang);
-    Ok(next.run(req).await)
+        let lang = I18N::from_str(lang_segment).unwrap_or(I18N::En);
+        Ok(lang)
+    }
 }
