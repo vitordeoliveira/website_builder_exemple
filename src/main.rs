@@ -1,7 +1,6 @@
-use axum::{middleware, routing::get, Extension, Router};
+use axum::{routing::get, Router};
 
 use website::{
-    i18n::i18n_middleware,
     view::{home, root},
     AppState,
 };
@@ -26,14 +25,13 @@ async fn main() -> Result<(), ()> {
 
     let state = AppState { title: "website" };
     let pages = Router::new()
-        .route("/", get(root))
-        .route("/home", get(home))
-        .with_state(state)
-        .layer(Extension("hello from extension"));
+        .route("/:i18n", get(root))
+        .route("/:i18n/home", get(home));
 
     let app = Router::new()
-        .nest("/:i18n", pages)
-        .layer(middleware::from_fn(i18n_middleware));
+        .route("/", get(root))
+        .merge(pages)
+        .with_state(state);
 
     axum::serve(listener, app).await.unwrap();
 
