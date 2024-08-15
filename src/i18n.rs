@@ -3,9 +3,6 @@ use std::{fmt::Display, str::FromStr};
 use axum::{async_trait, extract::FromRequestParts, http::request::Parts};
 use strum::{Display, EnumString};
 
-// TODO: should be a struct that impl Display
-// TODO: should work in a way that the translations should be set IN the file that use it
-
 #[derive(Clone, EnumString, Display)]
 #[strum(ascii_case_insensitive)]
 pub enum I18N {
