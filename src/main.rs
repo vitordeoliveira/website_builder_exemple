@@ -5,7 +5,6 @@ use website::{
     AppState,
 };
 
-// TODO: impl i18n in a way that if not set on URI redirect to default
 // TODO: setup error
 // TODO: setup tracing with open telemetry
 // TODO: setup config singleton
@@ -29,7 +28,7 @@ async fn main() -> Result<(), ()> {
         .route("/:i18n/home", get(home));
 
     let app = Router::new()
-        .route("/", get(root))
+        .route("/", get(home))
         .merge(pages)
         .with_state(state);
 
