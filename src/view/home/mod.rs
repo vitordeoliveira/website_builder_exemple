@@ -4,7 +4,9 @@ use axum::{
     response::{Html, IntoResponse},
 };
 
-use crate::i18n::{Translatable, Translation, I18N};
+use crate::i18n::{
+    I18N, {Translatable, Translation},
+};
 
 #[derive(Template)]
 #[template(path = "home/home.html")]
