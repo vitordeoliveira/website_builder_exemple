@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use axum::{async_trait, extract::FromRequestParts, http::request::Parts};
 use strum::{Display, EnumString};
@@ -27,5 +27,40 @@ where
 
         let lang = I18N::from_str(lang_segment).unwrap_or(I18N::En);
         Ok(lang)
+    }
+}
+
+pub trait Translatable {
+    fn title(&self) -> Translation;
+    fn stringvalue(&self) -> Translation;
+}
+
+impl Translatable for I18N {
+    fn title(&self) -> Translation {
+        let text = match self {
+            I18N::En => "title",
+            I18N::Fr => "titre",
+            I18N::Es => "título",
+        };
+
+        Translation(text)
+    }
+
+    fn stringvalue(&self) -> Translation {
+        let text = match self {
+            I18N::En => "Hello from myownvalue",
+            I18N::Fr => "Bonjour de ma propre valeur",
+            I18N::Es => "Hola de mi propio valor",
+        };
+
+        Translation(text)
+    }
+}
+
+pub struct Translation<'a>(&'a str);
+
+impl<'a> Display for Translation<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
