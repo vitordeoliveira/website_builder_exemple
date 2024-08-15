@@ -8,9 +8,9 @@ use crate::i18n::{Translatable, Translation, I18N};
 
 #[derive(Template)]
 #[template(path = "home/home.html")]
-pub struct HomeTemplate<'a> {
-    title: Translation<'a>,
-    stringvalue: Translation<'a>,
+pub struct HomeTemplate {
+    title: Translation,
+    stringvalue: Translation,
     vec_strings: Vec<&'static str>,
     lang: I18N,
 }
