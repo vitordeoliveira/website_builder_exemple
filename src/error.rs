@@ -4,13 +4,13 @@ use axum::{
 };
 use thiserror::Error;
 
-#[derive(Error, Debug)]
-pub enum Error {
-    #[error("Internal Server Error {0}")]
-    InternalServer(String),
+#[derive(Error, Debug, PartialEq)]
+pub enum SysError {
+    #[error("I18N Error: {0}")]
+    I18NError(String),
 }
 
-impl IntoResponse for Error {
+impl IntoResponse for SysError {
     fn into_response(self) -> axum::response::Response {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -19,3 +19,5 @@ impl IntoResponse for Error {
             .into_response()
     }
 }
+
+pub enum ClientError {}
