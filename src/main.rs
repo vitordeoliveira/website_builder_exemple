@@ -1,3 +1,4 @@
+use anyhow::Result;
 use axum::{routing::get, Router};
 
 use website::{
@@ -18,7 +19,7 @@ use website::{
 // TODO: write blogpost about snapshot testing with askama
 
 #[tokio::main]
-async fn main() -> Result<(), ()> {
+async fn main() -> Result<()> {
     let port = "3000";
     tracing_subscriber::fmt().init();
     tracing::info!("router initialized, now listening on port {}", port);
