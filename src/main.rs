@@ -11,6 +11,11 @@ use website::{
 // TODO: impl adatper for database connections
 // TODO: impl controller properly
 // TODO: impl model
+// TODO: impl snapshot testting with asmaka
+// TODO: setup workspaces
+// TODO: write blogpost about i18n
+// TODO: write blogpost about tracing with open telemetry
+// TODO: write blogpost about snapshot testing with askama
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
