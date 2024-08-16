@@ -6,9 +6,9 @@ use axum::{async_trait, extract::FromRequestParts, http::request::Parts};
 use std::str::FromStr;
 use strum::{Display, EnumString};
 
-#[derive(Clone, EnumString, Display)]
 use crate::error::SysError;
 
+#[derive(Clone, EnumString, Display)]
 #[strum(ascii_case_insensitive)]
 pub enum I18N {
     En,
@@ -38,3 +38,20 @@ where
     }
 }
 
+#[cfg(test)]
+#[test]
+fn should_return_i18n_error() {
+    let lang_segment = "invalid_lang";
+    let result = I18N::from_str(lang_segment).map_err(|e| SysError::I18NError(e.to_string()));
+
+    match result {
+        Err(err_msg) => {
+            assert!(err_msg
+                .to_string()
+                .contains("I18N Error: Matching variant not found"));
+        }
+        Ok(_) => {
+            panic!("Expected SysError::I18NError, got something else.");
+        }
+    }
+}
