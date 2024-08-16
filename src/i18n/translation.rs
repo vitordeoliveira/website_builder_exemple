@@ -31,7 +31,8 @@ impl Translatable for I18N {
     }
 }
 
-pub struct Translation(String);
+#[derive(Debug, PartialEq)]
+pub struct Translation(pub String);
 
 impl Display for Translation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
