@@ -1,16 +1,13 @@
 use anyhow::Result;
 use axum::{routing::get, Router};
 
-use website::{
-    view::{home, root},
-    AppState,
-};
+use website::view::{home, root};
 
-// TODO: setup error
 // TODO: setup tracing with open telemetry
 // TODO: setup config singleton
 // TODO: impl adatper for database connections
 // TODO: impl controller properly
+// TODO: setup error (ClientError)
 // TODO: impl model
 // TODO: impl snapshot testting with asmaka
 // TODO: setup workspaces
@@ -28,15 +25,11 @@ async fn main() -> Result<()> {
         .await
         .unwrap();
 
-    let state = AppState { title: "website" };
-    let pages = Router::new()
+    let translated_pages = Router::new()
         .route("/:i18n", get(root))
         .route("/:i18n/home", get(home));
 
-    let app = Router::new()
-        .route("/", get(home))
-        .merge(pages)
-        .with_state(state);
+    let app = Router::new().route("/", get(home)).merge(translated_pages);
 
     axum::serve(listener, app).await.unwrap();
 

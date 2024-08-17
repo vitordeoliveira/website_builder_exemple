@@ -8,9 +8,10 @@ use strum::{Display, EnumString};
 
 use crate::error::SysError;
 
-#[derive(Clone, EnumString, Display, PartialEq, Debug)]
+#[derive(Clone, EnumString, Display, PartialEq, Debug, Default)]
 #[strum(ascii_case_insensitive)]
 pub enum I18N {
+    #[default]
     En,
     Fr,
     Es,
@@ -25,7 +26,7 @@ impl I18N {
             .next()
             .unwrap_or("invalid");
 
-        I18N::from_str(lang_segment).unwrap_or(I18N::En)
+        I18N::from_str(lang_segment).unwrap_or_default()
     }
 }
 
