@@ -55,9 +55,9 @@ impl Tracing {
         let tracer = init_tracer_provider()?;
 
         tracing_subscriber::registry()
+            .with(LevelFilter::INFO)
             .with(tracing_subscriber::fmt::layer())
             .with(OpenTelemetryLayer::new(tracer))
-            .with(LevelFilter::DEBUG)
             .init();
 
         Ok(())
