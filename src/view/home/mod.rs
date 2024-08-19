@@ -3,6 +3,7 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
 };
+use tracing::instrument;
 
 use crate::i18n::{
     I18N, {Translatable, Translation},
@@ -17,6 +18,7 @@ pub struct HomeTemplate {
     lang: I18N,
 }
 
+#[instrument]
 pub async fn home(lang: I18N) -> impl IntoResponse {
     let home = HomeTemplate {
         title: lang.title(),

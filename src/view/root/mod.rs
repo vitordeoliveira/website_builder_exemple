@@ -1,11 +1,11 @@
 use askama::Template;
 use axum::{
-    extract::State,
     http::StatusCode,
     response::{Html, IntoResponse},
 };
+use tracing::instrument;
 
-use crate::{i18n::I18N, AppState};
+use crate::i18n::I18N;
 
 #[derive(Template)]
 #[template(path = "root/root.html")]
@@ -13,8 +13,9 @@ pub struct RootTemplate {
     title: String,
 }
 
-pub async fn root(i18n: I18N, State(AppState { title }): State<AppState>) -> impl IntoResponse {
-    let title = format!("from state: {} ---- lang_from_extractor:{i18n}", title);
+#[instrument]
+pub async fn root(i18n: I18N) -> impl IntoResponse {
+    let title = format!("lang_from_extractor:{i18n}");
     let root = RootTemplate { title };
     (StatusCode::OK, Html(root.render().unwrap()))
 }
