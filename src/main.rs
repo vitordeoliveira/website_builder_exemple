@@ -1,16 +1,10 @@
 use anyhow::Result;
 use axum::{routing::get, Router};
 
-use opentelemetry::{
-    trace::{TraceError, TracerProvider as _},
-    KeyValue,
+use website::{
+    config,
+    view::{home, root},
 };
-use opentelemetry_sdk::trace as sdktrace;
-use opentelemetry_sdk::{runtime, Resource};
-use opentelemetry_semantic_conventions::resource::SERVICE_NAME;
-use tracing::level_filters::LevelFilter;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use website::view::{home, root};
 
 // TODO: setup config singleton
 // TODO: impl adatper for database connections
@@ -18,43 +12,17 @@ use website::view::{home, root};
 // TODO: setup error (ClientError)
 // TODO: impl model
 // TODO: impl snapshot testting with asmaka
+// TODO: add metrics to opentelemetry (just doing tracing for now)
 // TODO: setup workspaces
 // TODO: write blogpost about i18n
 // TODO: write blogpost about tracing with open telemetry
 // TODO: write blogpost about snapshot testing with askama
 
-fn init_tracer_provider() -> Result<opentelemetry_sdk::trace::TracerProvider, TraceError> {
-    opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_exporter(
-            opentelemetry_otlp::new_exporter().tonic(), // .with_endpoint("http://localhost:4317"),
-        )
-        .with_trace_config(
-            sdktrace::Config::default().with_resource(Resource::new(vec![KeyValue::new(
-                SERVICE_NAME,
-                "website-builder",
-            )])),
-        )
-        .install_batch(runtime::Tokio)
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let port = "3000";
-    // Create a new OpenTelemetry trace pipeline that prints to stdout
-    // let provider = TracerProvider::builder()
-    //     .with_simple_exporter(stdout::SpanExporter::default())
-    //     .build();
 
-    let tracer = init_tracer_provider()?.tracer("my_app");
-
-    let telemetry = tracing_opentelemetry::layer().with_tracer(tracer);
-
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer())
-        .with(telemetry)
-        .with(LevelFilter::DEBUG)
-        .init();
+    config::tracing::Tracing::setup()?;
 
     tracing::info!("router initialized, now listening on port {}", port);
 
