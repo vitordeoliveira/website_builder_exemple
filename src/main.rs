@@ -20,13 +20,12 @@ use website::{
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let port = "3000";
+    let host = env!("HOST");
+    let port = env!("PORT");
 
     config::tracing::Tracing::setup()?;
 
-    tracing::info!("router initialized, now listening on port {}", port);
-
-    let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{port}"))
+    let listener = tokio::net::TcpListener::bind(format!("{host}:{port}"))
         .await
         .unwrap();
 
@@ -37,6 +36,8 @@ async fn main() -> Result<()> {
     let app = Router::new().route("/", get(home)).merge(translated_pages);
 
     axum::serve(listener, app).await.unwrap();
+
+    tracing::info!("router initialized, now listening on port {}", port);
 
     Ok(())
 }
