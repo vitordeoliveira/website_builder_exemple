@@ -1,14 +1,15 @@
-use crate::i18n::{Translatable, Translation, I18N};
+use crate::{
+    i18n::{Translatable, Translation, I18N},
+    model::exemple_service,
+    state::AppState,
+};
 use askama::Template;
 use axum::{
     extract::State,
     http::StatusCode,
     response::{Html, IntoResponse},
 };
-use sqlx::PgPool;
-use sqlx::Row;
 use tracing::instrument;
-use tracing::Instrument;
 
 #[derive(Template)]
 #[template(path = "home/home.html")]
@@ -20,16 +21,12 @@ pub struct HomeTemplate {
 }
 
 #[instrument]
-pub async fn home(lang: I18N, State(pool): State<PgPool>) -> impl IntoResponse {
-    let result = sqlx::query(r#"select 'hello world from pg' as "message!""#)
-        .fetch_one(&pool)
-        .instrument(tracing::info_span!("db_query"))
-        .await
-        .unwrap();
+pub async fn home(lang: I18N, State(AppState { pg_pool }): State<AppState>) -> impl IntoResponse {
+    let result = exemple_service(&pg_pool).await;
 
     let home = HomeTemplate {
         title: lang.title(),
-        stringvalue: Translation(result.get("message!")),
+        stringvalue: Translation(result),
         vec_strings: vec!["Rust", "is", "the", "best", "language"],
         lang: lang.clone(),
     };
