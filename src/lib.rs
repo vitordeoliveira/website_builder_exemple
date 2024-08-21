@@ -1,5 +1,5 @@
 // region
-mod model;
+mod service;
 // flatten
 pub use state::*;
 // public
