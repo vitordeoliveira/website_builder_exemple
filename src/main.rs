@@ -5,6 +5,8 @@ use website::{
     config,
     view::{home, root},
 };
+use sqlx::postgres::PgPoolOptions;
+use website::{config, view_controller::home, view_controller::root};
 
 // TODO: setup config singleton
 // TODO: impl adatper for database connections
