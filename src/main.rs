@@ -14,11 +14,15 @@ use website::{config, view_controller::home, view_controller::root};
 // TODO: setup error (ClientError)
 // TODO: impl model
 // TODO: impl snapshot testting with asmaka
+// TODO: setup tailwind
+// TODO: setup HTMX
 // TODO: add metrics to opentelemetry (just doing tracing for now)
 // TODO: setup workspaces
 // TODO: write blogpost about i18n
 // TODO: write blogpost about tracing with open telemetry
 // TODO: write blogpost about snapshot testing with askama
+//
+// TODO: connect to kafka in another service (4FUN)
 
 #[tokio::main]
 async fn main() -> Result<()> {
