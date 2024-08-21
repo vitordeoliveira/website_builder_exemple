@@ -1,16 +1,15 @@
-use anyhow::Result;
+use std::time::Duration;
+
+use anyhow::{Context, Result};
 use axum::{routing::get, Router};
 
+use sqlx::postgres::PgPoolOptions;
 use website::{
     config,
-    view::{home, root},
+    view_controller::{home, root},
+    AppState,
 };
-use sqlx::postgres::PgPoolOptions;
-use website::{config, view_controller::home, view_controller::root};
 
-// TODO: setup config singleton
-// TODO: impl adatper for database connections
-// TODO: impl controller properly
 // TODO: setup error (ClientError)
 // TODO: impl model
 // TODO: impl snapshot testting with asmaka
@@ -23,27 +22,43 @@ use website::{config, view_controller::home, view_controller::root};
 // TODO: write blogpost about snapshot testing with askama
 //
 // TODO: connect to kafka in another service (4FUN)
+//
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let host = env!("HOST");
     let port = env!("PORT");
+    let db_connection_str = env!("DATABASE_URL");
 
     config::tracing::Tracing::setup()?;
 
+    let pool = PgPoolOptions::new()
+        .max_connections(25)
+        .acquire_timeout(Duration::from_secs(3))
+        .connect(db_connection_str)
+        .await
+        .expect("can't connect to database");
+
     let listener = tokio::net::TcpListener::bind(format!("{host}:{port}"))
         .await
+        .context("Failed to start tokio listener")
         .unwrap();
 
     let translated_pages = Router::new()
         .route("/:i18n", get(root))
         .route("/:i18n/home", get(home));
 
-    let app = Router::new().route("/", get(home)).merge(translated_pages);
-
-    axum::serve(listener, app).await.unwrap();
+    let app = Router::new()
+        .route("/", get(home))
+        .merge(translated_pages)
+        .with_state(AppState { pg_pool: pool });
 
     tracing::info!("router initialized, now listening on port {}", port);
+
+    axum::serve(listener, app)
+        .await
+        .context("failed to serve server")
+        .unwrap();
 
     Ok(())
 }
