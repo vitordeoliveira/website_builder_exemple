@@ -2,10 +2,13 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
 };
+use strum::Display;
 use thiserror::Error;
 
-#[derive(Error, Debug, PartialEq)]
-pub enum SysError {}
+#[derive(Error, Debug, PartialEq, Display)]
+pub enum SysError {
+    InternalServerError,
+}
 
 impl IntoResponse for SysError {
     fn into_response(self) -> axum::response::Response {
