@@ -1,4 +1,5 @@
 // region
+mod model;
 // flatten
 pub use state::*;
 // public
