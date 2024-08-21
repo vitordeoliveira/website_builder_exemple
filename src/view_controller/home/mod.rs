@@ -1,6 +1,6 @@
 use crate::{
     i18n::{Translatable, Translation, I18N},
-    model::exemple_service,
+    service::exemple_service,
     state::AppState,
 };
 use askama::Template;
