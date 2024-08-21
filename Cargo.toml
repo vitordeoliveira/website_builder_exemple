@@ -19,3 +19,10 @@ tracing = "0.1.40"
 tracing-opentelemetry = { version = "0.25.0", features = ["metrics"] }
 tracing-subscriber = "0.3.18"
 opentelemetry-semantic-conventions = "0.16.0"
+
+sqlx = { version = "0.8", features = [
+  "runtime-tokio-rustls",
+  "any",
+  "postgres",
+  "macros",
+] }
