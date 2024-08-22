@@ -6,24 +6,24 @@ use strum::Display;
 use thiserror::Error;
 
 #[derive(Error, Debug, Display)]
-pub enum SysError {
+pub enum ServerError {
     InternalServerError,
 
     #[error(transparent)]
     Undefined(#[from] anyhow::Error),
 }
 
-impl IntoResponse for SysError {
+impl IntoResponse for ServerError {
     fn into_response(self) -> axum::response::Response {
         tracing::error!("{self}");
 
         match self {
-            SysError::InternalServerError => (
+            ServerError::InternalServerError => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Html("Internal Server Error"),
             )
                 .into_response(),
-            SysError::Undefined(_) => {
+            ServerError::Undefined(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, Html("Undefined Error")).into_response()
             }
         }

@@ -6,7 +6,7 @@ use axum::{async_trait, extract::FromRequestParts, http::request::Parts};
 use std::str::FromStr;
 use strum::{Display, EnumString};
 
-use crate::error::SysError;
+use crate::error::ServerError;
 
 #[derive(Clone, EnumString, Display, PartialEq, Debug, Default)]
 #[strum(ascii_case_insensitive)]
@@ -35,7 +35,7 @@ impl<S> FromRequestParts<S> for I18N
 where
     S: Send + Sync,
 {
-    type Rejection = SysError;
+    type Rejection = ServerError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         let path = parts.uri.to_string();

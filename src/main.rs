@@ -3,7 +3,7 @@ use axum::{routing::get, Router};
 
 use website::{
     config,
-    error::SysError,
+    error::ServerError,
     view_controller::{home, root},
     AppState,
 };
@@ -21,7 +21,7 @@ use website::{
 // TODO: connect to kafka in another service (4FUN)
 
 #[tokio::main]
-async fn main() -> Result<(), SysError> {
+async fn main() -> Result<(), ServerError> {
     let host = env!("HOST");
     let port = env!("PORT");
     let db_connection_str = env!("DATABASE_URL");
@@ -43,7 +43,6 @@ async fn main() -> Result<(), SysError> {
         .route("/", get(home))
         .merge(translated_pages)
         .with_state(app_state);
-    // .layer(middleware::map_response(set_header));
 
     tracing::info!("router initialized, now listening on port {}", port);
 

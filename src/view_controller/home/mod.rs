@@ -1,5 +1,5 @@
 use crate::{
-    error::SysError,
+    error::ServerError,
     i18n::{Translatable, Translation, I18N},
     service::exemple_service,
     state::AppState,
@@ -31,7 +31,7 @@ fn test() -> Result<String> {
 pub async fn home(
     lang: I18N,
     State(AppState { pg_pool }): State<AppState>,
-) -> Result<impl IntoResponse, SysError> {
+) -> Result<impl IntoResponse, ServerError> {
     let result = exemple_service(&pg_pool).await;
 
     test()?;
