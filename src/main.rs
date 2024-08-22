@@ -1,20 +1,17 @@
-use std::time::Duration;
-
 use anyhow::{Context, Result};
 use axum::{routing::get, Router};
 
-use sqlx::postgres::PgPoolOptions;
 use website::{
     config,
+    error::SysError,
     view_controller::{home, root},
     AppState,
 };
 
-// TODO: setup error (ClientError)
-// TODO: impl model
 // TODO: impl snapshot testting with asmaka
 // TODO: setup tailwind
 // TODO: setup HTMX
+// TODO: setup rust make (db, jeager, tailwind, htmx)
 // TODO: add metrics to opentelemetry (just doing tracing for now)
 // TODO: setup workspaces
 // TODO: write blogpost about i18n
@@ -22,22 +19,16 @@ use website::{
 // TODO: write blogpost about snapshot testing with askama
 //
 // TODO: connect to kafka in another service (4FUN)
-//
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), SysError> {
     let host = env!("HOST");
     let port = env!("PORT");
     let db_connection_str = env!("DATABASE_URL");
 
     config::tracing::Tracing::setup()?;
 
-    let pool = PgPoolOptions::new()
-        .max_connections(25)
-        .acquire_timeout(Duration::from_secs(3))
-        .connect(db_connection_str)
-        .await
-        .expect("can't connect to database");
+    let app_state = AppState::new(db_connection_str).await;
 
     let listener = tokio::net::TcpListener::bind(format!("{host}:{port}"))
         .await
@@ -51,7 +42,8 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .route("/", get(home))
         .merge(translated_pages)
-        .with_state(AppState { pg_pool: pool });
+        .with_state(app_state);
+    // .layer(middleware::map_response(set_header));
 
     tracing::info!("router initialized, now listening on port {}", port);
 

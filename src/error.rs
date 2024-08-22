@@ -5,32 +5,27 @@ use axum::{
 use strum::Display;
 use thiserror::Error;
 
-#[derive(Error, Debug, PartialEq, Display)]
+#[derive(Error, Debug, Display)]
 pub enum SysError {
     InternalServerError,
+
+    #[error(transparent)]
+    Undefined(#[from] anyhow::Error),
 }
 
 impl IntoResponse for SysError {
     fn into_response(self) -> axum::response::Response {
-        // error!("{self}");
-        // match self {
-        //     SysError::I18NError(path) => {
-        //         let mut segments = path
-        //             .trim_start_matches('/')
-        //             .splitn(2, '/')
-        //             .collect::<Vec<&str>>();
-        //         segments[0] = "en";
-        //         let new_path = format!("/{}", segments.join("/"));
-        //         Redirect::temporary(&new_path).into_response()
-        //     }
-        // }
+        tracing::error!("{self}");
 
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Html("internal server error"),
-        )
-            .into_response()
+        match self {
+            SysError::InternalServerError => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Html("Internal Server Error"),
+            )
+                .into_response(),
+            SysError::Undefined(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, Html("Undefined Error")).into_response()
+            }
+        }
     }
 }
-
-pub enum ClientError {}
