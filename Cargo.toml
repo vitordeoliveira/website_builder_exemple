@@ -26,3 +26,6 @@ sqlx = { version = "0.8", features = [
   "postgres",
   "macros",
 ] }
+
+[dev-dependencies]
+axum-test = { version = "15.5.3" }
