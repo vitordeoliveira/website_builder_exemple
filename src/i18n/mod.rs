@@ -38,7 +38,8 @@ where
     type Rejection = ServerError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let path = parts.uri.to_string();
+        let path = parts.uri.path().to_string();
+
         Ok(Self::get_path_language(path))
     }
 }
