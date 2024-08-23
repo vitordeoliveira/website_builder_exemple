@@ -2,12 +2,9 @@ use anyhow::{Context, Result};
 
 use website::{app, config, error::ServerError};
 
-// TODO: impl integration test
+// TODO: setup rust make (db, jeager, tailwind, htmx)
 // TODO: setup unit test
 // TODO: impl snapshot testting with asmaka
-// TODO: setup tailwind
-// TODO: setup HTMX
-// TODO: setup rust make (db, jeager, tailwind, htmx)
 // TODO: add metrics to opentelemetry (just doing tracing for now)
 
 // Extras
@@ -21,7 +18,9 @@ use website::{app, config, error::ServerError};
 async fn main() -> Result<(), ServerError> {
     let host = env!("HOST");
     let port = env!("PORT");
-    let db_connection_str = env!("DATABASE_URL");
+    let db_connection = env!("DATABASE_URL");
+    let assets_path = env!("CARGO_MANIFEST_DIR");
+
     config::tracing::Tracing::setup()?;
 
     let listener = tokio::net::TcpListener::bind(format!("{host}:{port}"))
@@ -29,7 +28,7 @@ async fn main() -> Result<(), ServerError> {
         .context("Failed to start tokio listener")
         .unwrap();
 
-    let app = app::new_app(db_connection_str).await;
+    let app = app::new_app(db_connection, assets_path).await;
 
     tracing::info!("router initialized, now listening on port {}", port);
 
