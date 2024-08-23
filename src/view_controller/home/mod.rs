@@ -4,14 +4,14 @@ use crate::{
     service::exemple_service,
     state::AppState,
 };
-use anyhow::{Context, Result};
+use anyhow::Result;
 use askama::Template;
 use axum::{
     extract::State,
     http::StatusCode,
     response::{Html, IntoResponse},
 };
-use tracing::{error, instrument};
+use tracing::instrument;
 
 #[derive(Template)]
 #[template(path = "home/home.html")]
@@ -22,19 +22,12 @@ pub struct HomeTemplate {
     lang: I18N,
 }
 
-fn test() -> Result<String> {
-    error!("logis");
-    Err(anyhow::anyhow!("bla")).context("test context")
-}
-
 #[instrument]
 pub async fn home(
     lang: I18N,
     State(AppState { pg_pool }): State<AppState>,
 ) -> Result<impl IntoResponse, ServerError> {
     let result = exemple_service(&pg_pool).await;
-
-    test()?;
 
     let home = HomeTemplate {
         title: lang.title(),
