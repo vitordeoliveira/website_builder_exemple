@@ -3,6 +3,7 @@ mod service;
 // flatten
 pub use state::*;
 // public
+pub mod app;
 pub mod config;
 pub mod error;
 pub mod i18n;
