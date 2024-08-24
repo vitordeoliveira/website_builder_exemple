@@ -2,7 +2,6 @@ use anyhow::{Context, Result};
 
 use website::{app, config, error::ServerError};
 
-// TODO: setup rust make (db, jeager, tailwind, htmx)
 // TODO: setup unit test
 // TODO: impl snapshot testting with asmaka
 // TODO: add metrics to opentelemetry (just doing tracing for now)

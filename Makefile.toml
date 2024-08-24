@@ -1,0 +1,28 @@
+[tasks.buildcss]
+command = "npx"
+args = [
+  "tailwindcss",
+  "-i",
+  "./assets/input.css",
+  "-o",
+  "./assets/output.css",
+  "--minify",
+]
+
+[tasks.watch]
+command = "cargo"
+args = ["watch", "-q", "-x", "run"]
+dependencies = ["buildcss"]
+
+[tasks.setup]
+command = "docker-compose"
+args = ["up", "-d"]
+
+[tasks.run_build]
+command = "cargo"
+args = ["watch", "-s", "cargo make buildcss", "-s", "cargo run"]
+
+
+[tasks.test]
+command = "cargo"
+args = ["watch", "-x", "test"]
