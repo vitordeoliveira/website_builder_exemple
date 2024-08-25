@@ -10,7 +10,7 @@ use crate::i18n::I18N;
 #[derive(Template)]
 #[template(path = "root/root.html")]
 pub struct RootTemplate {
-    title: String,
+    pub title: String,
 }
 
 #[instrument]

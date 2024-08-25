@@ -1,5 +1,5 @@
 use axum_test::TestServer;
-use website::app::new_app;
+use website::{app::new_app, view_controller::RootTemplate};
 
 // use ::axum_test::TestServerConfig;
 
@@ -53,4 +53,18 @@ async fn root_not_language() {
     let server = TestServer::new(app).unwrap();
     let response = server.get("/invalid").await;
     response.assert_text_contains("lang_from_extractor:En");
+}
+
+#[tokio::test]
+async fn root_match() {
+    let db_connection = env!("DATABASE_URL");
+    let assets_path = env!("CARGO_MANIFEST_DIR");
+    let app = new_app(db_connection, assets_path).await;
+    let server = TestServer::new(app).unwrap();
+    let response = server.get("/invalid").await;
+
+    let expect = RootTemplate {
+        title: "lang_from_extractor:En".to_string(),
+    };
+    assert_eq!(response.text(), expect.to_string())
 }
