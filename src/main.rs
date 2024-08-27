@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 
 use website::{app, config, error::ServerError};
 
-// TODO: setup unit test
-// TODO: impl snapshot testting with asmaka
+// TODO: setup migrations runner
+// TODO: fix github actions for using testcontainers
 // TODO: add metrics to opentelemetry (just doing tracing for now)
 
 // Extras

@@ -5,7 +5,9 @@ use website::app::new_app;
 
 use testcontainers::{core::WaitFor, runners::AsyncRunner, ContainerAsync, GenericImage, ImageExt};
 
-static INSTANCE_POSTGRES: OnceCell<ContainerAsync<GenericImage>> = OnceCell::const_new();
+type PostgresContainer = OnceCell<ContainerAsync<GenericImage>>;
+
+static INSTANCE_POSTGRES: PostgresContainer = OnceCell::const_new();
 pub async fn postgres() -> &'static ContainerAsync<GenericImage> {
     INSTANCE_POSTGRES
         .get_or_init(|| async {
