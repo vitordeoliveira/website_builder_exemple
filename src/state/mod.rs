@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use anyhow::Context;
+use anyhow::{Context, Result};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 
 #[derive(Clone, Debug)]
@@ -9,7 +9,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn new(db_connection_str: &str) -> Self {
+    pub async fn new(db_connection_str: &str) -> Result<Self> {
         let pg_pool = PgPoolOptions::new()
             .max_connections(25)
             .acquire_timeout(Duration::from_secs(3))
@@ -18,6 +18,7 @@ impl AppState {
             .context("postgres database pool creation error")
             .expect("can't connect to database");
 
-        Self { pg_pool }
+        sqlx::migrate!("db/migrations").run(&pg_pool).await?;
+        Ok(Self { pg_pool })
     }
 }
