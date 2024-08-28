@@ -2,3 +2,11 @@
 
 This should be the bare minimum setup with the bare minimum
 premature-optimizations for a website
+
+## setup
+
+```bash
+cargo install sqlx-cli
+cargo make setup
+cargo build
+```
