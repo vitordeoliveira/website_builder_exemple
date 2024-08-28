@@ -27,7 +27,7 @@ async fn main() -> Result<(), ServerError> {
         .context("Failed to start tokio listener")
         .unwrap();
 
-    let app = app::new_app(db_connection, assets_path).await;
+    let app = app::new_app(db_connection, assets_path).await?;
 
     tracing::info!("router initialized, now listening on port {}", port);
 

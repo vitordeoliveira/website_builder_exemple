@@ -49,7 +49,7 @@ pub async fn setup() -> TestServer {
 
     let db_connection = format!("postgres://test_user:test_password@localhost:{port}/test_db");
     let assets_path = env!("CARGO_MANIFEST_DIR");
-    let app = new_app(&db_connection, assets_path).await;
+    let app = new_app(&db_connection, assets_path).await.unwrap();
 
     TestServer::new(app).unwrap()
 }
