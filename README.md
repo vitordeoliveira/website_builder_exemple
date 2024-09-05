@@ -9,4 +9,5 @@ premature-optimizations for a website
 cargo install sqlx-cli
 cargo make setup
 cargo build
+
 ```
