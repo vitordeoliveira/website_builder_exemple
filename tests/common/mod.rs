@@ -43,9 +43,9 @@ fn shutdown() {
 }
 
 pub async fn setup() -> TestServer {
-    let conteiner = postgres().await;
+    let container = postgres().await;
 
-    let port = conteiner.get_host_port_ipv4(5432).await.unwrap();
+    let port = container.get_host_port_ipv4(5432).await.unwrap();
 
     let db_connection = format!("postgres://test_user:test_password@localhost:{port}/test_db");
     let assets_path = env!("CARGO_MANIFEST_DIR");
