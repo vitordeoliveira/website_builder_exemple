@@ -1,5 +1,8 @@
+use std::sync::{Arc, Mutex};
+
 use axum_test::TestServer;
 use ctor::dtor;
+use once_cell::sync::Lazy;
 use tokio::sync::OnceCell;
 use website::app::new_app;
 
@@ -27,23 +30,64 @@ pub async fn postgres() -> &'static ContainerAsync<GenericImage> {
         .await
 }
 
-#[dtor]
-fn shutdown() {
-    std::process::Command::new("docker")
-        .arg("kill")
-        .arg("integration_test_postgres")
-        .output()
-        .expect("failed to kill container");
+static STATIC_INSTANCE: Lazy<Arc<Mutex<Option<ContainerAsync<GenericImage>>>>> = Lazy::new(|| {
+    Arc::new(Mutex::new(None)) // Initialize with None
+});
 
-    std::process::Command::new("docker")
-        .arg("rm")
-        .arg("integration_test_postgres")
-        .output()
-        .expect("failed to kill container");
+async fn get_or_init() -> Option<ContainerAsync<GenericImage>> {
+    let mut instance = STATIC_INSTANCE.lock().unwrap(); // Lock the mutex
+    if instance.is_none() {
+        let init = GenericImage::new("postgres", "14.1")
+            .with_wait_for(WaitFor::message_on_stdout(
+                "database system is ready to accept connections",
+            ))
+            .with_wait_for(WaitFor::seconds(5))
+            .with_env_var("POSTGRES_USER", "test_user")
+            .with_env_var("POSTGRES_PASSWORD", "test_password")
+            .with_env_var("POSTGRES_DB", "test_db")
+            .start()
+            .await
+            .expect("Postgres start");
+        *instance = Some(init); // Initialize if it's None
+        println!("Instance initialized");
+        instance.take()
+    } else {
+        println!("Instance was already initialized");
+        instance.take()
+    }
 }
 
+#[dtor]
+fn drop_instance() {
+    println!("Program terminating, dropping static instance...");
+
+    let mut instance = STATIC_INSTANCE.lock().unwrap();
+    if instance.take().is_some() {
+        println!("Dropping value"); // Clean up the resource
+    } else {
+        println!("Nothing to drop, instance was not initialized.");
+    }
+}
+
+// #[dtor]
+// fn shutdown() {
+//     std::process::Command::new("docker")
+//         .arg("kill")
+//         .arg("integration_test_postgres")
+//         .output()
+//         .expect("failed to kill container");
+//
+//     std::process::Command::new("docker")
+//         .arg("rm")
+//         .arg("integration_test_postgres")
+//         .output()
+//         .expect("failed to kill container");
+// }
+
 pub async fn setup() -> TestServer {
-    let container = postgres().await;
+    // let container = postgres().await;
+
+    let container = get_or_init().await.unwrap();
 
     let port = container.get_host_port_ipv4(5432).await.unwrap();
 

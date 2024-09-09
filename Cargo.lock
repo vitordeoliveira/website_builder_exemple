@@ -3005,6 +3005,7 @@ dependencies = [
  "axum",
  "axum-test",
  "ctor",
+ "once_cell",
  "opentelemetry",
  "opentelemetry-otlp",
  "opentelemetry-semantic-conventions",
