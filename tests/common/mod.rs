@@ -5,7 +5,6 @@ use std::sync::RwLock;
 use axum_test::TestServer;
 use ctor::dtor;
 use once_cell::sync::Lazy;
-use tokio::sync::OnceCell;
 use website::app::new_app;
 
 use testcontainers::{core::WaitFor, runners::AsyncRunner, ContainerAsync, GenericImage, ImageExt};
