@@ -1,4 +1,5 @@
 // use std::sync::{Arc, Mutex, MutexGuard};
+#![allow(clippy::await_holding_lock)]
 
 use std::sync::RwLock;
 
